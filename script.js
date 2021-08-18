@@ -1,4 +1,5 @@
 // questions and answers
+// TODO add questions and answers
 var question = [
     {
         number: 1,
@@ -32,25 +33,71 @@ var question = [
     },
 ]
 
+//handles
+//var name = document.querySelector("");
+var startButton = document.querySelector(".start")
+var time = document.querySelector(".timer");
+var timeRemaining = 30;
 
-// User loads the page
+// when user clicks Start! timer begins
+startButton.addEventListener("click", startTimer);
 
-// User sees a button
+// when user flicks Start! title and rules change
+startButton.addEventListener("click", changeMessage);
 
-// On click, user is presented with a question
+// when user clicks Start! user is presented with first question
+startButton.addEventListener("click", startQuiz);
 
-// and a timer
-
-// When question is answered, another question props
-
-// When question is answered incorrectly, time is taken off timer
+// When question is answered (button press)...
+// Check if right > update score
+// Check if wrong > decrease timer
+// New question loads
 
 // When all ? answered or timer is 0 GAME ENDS
 
 // User can save initials and score
 
-// Score is stored for later viewing
+// Score is stored for later viewing in View Highscores
 
+// User presented option to Play Again
+
+// Removes start button elements
+function changeMessage() {
+    var landingTitle = document.querySelector(".landing h1")
+    var landingText = document.querySelector(".landing p")
+    var landingButton = document.querySelector(".landing button")
+
+    landingTitle.textContent = "Good Luck!"
+    landingText.setAttribute("style", "display:none;")
+    landingButton.setAttribute("style", "display:none;")
+
+}
+
+// Begins timer
+function startTimer() {
+    var timerInterval = setInterval(function() {
+        timeRemaining--;
+        time.textContent = "Timer: " + timeRemaining +"s";
+
+        if(timeRemaining === 0) {
+            clearInterval(timerInterval);
+            time.textContent = "Timer: " + timeRemaining +"s -- Time's Up!" ;
+            console.log("Game Over");
+            //TODO game over screen
+        }
+
+    }, 1000);
+}
+
+// Shows quiz deck
+function startQuiz() {
+    console.log("Quiz started");
+
+    //show footer
+    var questionCount = document.querySelector("footer h1");
+    questionCount.textContent = "Question " + question.number + " of x.";
+
+}
 
 /*
 GIVEN I am taking a code quiz
