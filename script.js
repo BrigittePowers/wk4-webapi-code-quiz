@@ -1,6 +1,6 @@
 // questions and answers
 // TODO add questions and answers
-var quizQuestions = [
+var quiz = [
     {
         number: 1,
         question: "This is question 1?",
@@ -34,10 +34,10 @@ var quizQuestions = [
 ]
 
 //handles
-//var name = document.querySelector("");
 var startButton = document.querySelector(".start")
-var timeRemaining = 3;
-var questionNumber = 1;
+var choicesBtn = document.querySelectorAll(".choices-btn");
+var timeRemaining = 30;
+var questionNumber = 0;
 
 // when user clicks Start! timer begins
 startButton.addEventListener("click", startTimer);
@@ -46,10 +46,11 @@ startButton.addEventListener("click", startTimer);
 startButton.addEventListener("click", changeMessage);
 
 // when user clicks Start! user is presented with first question
-startButton.addEventListener("click", startQuiz);
+startButton.addEventListener("click", generateQuestion);
 
-// When question is answered (button press)...
-var choices = document.querySelectorAll(".choices");
+// When question is answered...
+choicesBtn.addEventListener("click", answerSelected);
+
 
 
 // Check if right > update score
@@ -64,6 +65,10 @@ var choices = document.querySelectorAll(".choices");
 
 // User presented option to Play Again
 
+function answersSelected() {
+
+}
+
 // Removes start button elements
 function changeMessage() {
     var landingTitle = document.querySelector(".landing h1")
@@ -73,7 +78,36 @@ function changeMessage() {
     landingTitle.setAttribute("style", "display:none;");
     landingText.setAttribute("style", "display:none;");
     landingButton.setAttribute("style", "display:none;");
+}
 
+// Shows quiz deck
+function generateQuestion() {
+    console.log("Quiz started");
+    var quizDeck = document.querySelector(".quiz-deck");
+    
+    // show the question
+    var quizQst = document.createElement("h1");
+    quizQst.innerHTML = quiz[questionNumber].question;
+    quizDeck.appendChild(quizQst);
+
+    // for each potential answer...
+    for (var i = 0; i < quiz[questionNumber].choices.length; i++) {
+        // make a button
+        var choicesBtn = document.createElement("button")
+        choicesBtn.setAttribute("class", "btn choices-btn");
+
+        // define the content
+        choicesBtn.setAttribute("name", quiz[questionNumber].choices[i])
+        choicesBtn.innerHTML = quiz[questionNumber].choices[i];
+
+        // append
+        quizDeck.appendChild(choicesBtn);
+        console.log("Generating..." + quiz[questionNumber].choices[i]);
+    }
+
+    //show footer
+    var questionCount = document.querySelector("footer h1");
+    questionCount.textContent = "Question " + quiz[questionNumber].number + " of x.";
 }
 
 // Begins timer
@@ -93,16 +127,7 @@ function startTimer() {
     }, 1000);
 }
 
-// Shows quiz deck
-function startQuiz() {
-    console.log("Quiz started");
-    var quizDeck = document.querySelector(".quiz-deck");
 
-    //show footer
-    var questionCount = document.querySelector("footer h1");
-    questionCount.textContent = "Question " + questionNumber + " of x.";
-
-}
 
 /*
 GIVEN I am taking a code quiz

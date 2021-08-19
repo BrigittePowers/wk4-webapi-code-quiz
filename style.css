@@ -1,0 +1,33 @@
+body .wrapper {
+    margin: 10px;
+}
+
+header, footer {
+    background-color: #F97F51;
+    box-shadow: 3px 7px #2C3A47;
+}
+
+.highscore {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+}
+
+@media (max-width: 600px) {
+    .highscore {
+        flex-direction: column;
+        flex-wrap: wrap;
+    }
+}
+
+.highscore h1 {
+    font-size: 130%;
+    padding-left: 1%;
+    padding-right: 1%;
+    padding-top: .5%;
+}
+
+.btn {
+    border-radius: 10px;
+}
