@@ -1,5 +1,7 @@
 body .wrapper {
     margin: 10px;
+    padding-left: 30%;
+    padding-right: 30%;
 }
 
 header, footer {
@@ -7,11 +9,17 @@ header, footer {
     box-shadow: 3px 7px #2C3A47;
 }
 
+.header-child {
+    margin: 7px;
+    font-size: 140%;
+}
+
 .highscore {
     display: flex;
     flex-direction: row;
     flex-wrap: nowrap;
     justify-content: space-between;
+    align-items: center;
 }
 
 @media (max-width: 600px) {
@@ -31,14 +39,32 @@ header, footer {
 .btn {
     border-radius: 10px;
     width: 50%;
+    min-height: 80px;
+    font-size: 120%;
+    background-color: #2C3A47;
+    color: #eef2f7;
+    margin: 1%;
 }
 
 .quiz-deck {
     display: flex;
     flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-color: #3b4a58;
+    border-style: groove;
 }
 
-footer h1 {
+.quiz-deck p {
+    text-align: center;
+}
+
+.keyword {
+    color: #db2518;;
+}
+
+footer h1, p {
     font-size: 130%;
     text-align: center;
+    margin: 0px;
 }

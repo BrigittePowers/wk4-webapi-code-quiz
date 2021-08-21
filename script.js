@@ -15,24 +15,105 @@ var quiz = [
     },
     {
         number: 2,
-        question: "This is question 2?",
-        answer: 3,
+        question: "A function associated with an object is called:",
+        answer: 0,
         choices: [
-            "This is an incorrect answer",
-            "This is also incorrect but moreso",
-            "This is the correct answer"
+            "Method",
+            "Link",
+            "Function",
+            "None of the above"
         ]
     },
     {
         number: 3,
-        question: "This is question 3?",
+        question: "JavaScript is a ___-side programming language.",
         answer: 3,
         choices: [
-            "This is an incorrect answer",
-            "This is also incorrect but moreso",
-            "This is the correct answer"
+            "Client",
+            "Server",
+            "Neither",
+            "Both"
         ]
     },
+    {
+        number: 4,
+        question: "Which Dialog Box displays a message and a data entry field?",
+        answer: 2,
+        choices: [
+            "Alert()",
+            "Confirm()",
+            "Prompt()",
+            "Question()",
+            "Input()"
+        ]
+    },
+    {
+        number: 5,
+        question: "Which of the following statements will throw an error?",
+        answer: 1,
+        choices: [
+            "var fun = function bar(){}",
+            "var fun = function bar{}",
+            "function fun(){}"
+        ]
+    },
+    {
+        number: 6,
+        question: "What will the code 'boolean(3<7) return?",
+        answer: 0,
+        choices: [
+            "True",
+            "False",
+            "Undefined",
+            "Null",
+            "None"
+        ]
+    },
+    {
+        number: 7,
+        question: "Which of the following will return the type of the arguments passed to a function?",
+        answer: 0,
+        choices: [
+            "typeof operator",
+            "getType function",
+            "Both"
+        ]
+    },
+    {
+        number: 8,
+        question: "Which of the following statements is valid for the features of JavaScript??",
+        answer: 3,
+        choices: [
+            "JavaScript is complementary to and integrated with Java.",
+            "JavaScript is designed for creating network-centric applications.",
+            "JavaScript is a lightweight, interpreted programming language.",
+            "All of the above"
+        ]
+    },
+    {
+        number: 9,
+        question: "What is the function of Array object that adds and/or removes elements from an array??",
+        answer: 1,
+        choices: [
+            "sort()",
+            "splice()",
+            "shift()",
+            "send()"
+        ]
+    },
+    {
+        number: 10,
+        question: "Which of the following methods removes the last element from an array and returns that element??",
+        answer: 4,
+        choices: [
+            "last()",
+            "get()",
+            "anchor()",
+            "grab()",
+            "pop()"
+        ]
+    },
+    
 ]
 
 //handles
@@ -45,6 +126,7 @@ var questionTotal = quiz.length;
 var currentScore = 0;
 var highScore = 0;
 var correctAnswers = 0;
+var stopTime = false;
 
 //initialize
 document.addEventListener('DOMContentLoaded', function() {
@@ -73,7 +155,7 @@ function checkAnswer(answer) {
         clearQuizDeck();
         questionNumber = questionNumber + 1;
         correctAnswers = correctAnswers + 1;
-        answerFeedback.textContent = "Correct!"
+        answerFeedback.textContent = "Correct! :]"
         generateQuestion();
 
     } else {
@@ -82,7 +164,7 @@ function checkAnswer(answer) {
         clearQuizDeck();
         questionNumber = questionNumber + 1;
         generateQuestion();
-        answerFeedback.textContent = "Wrong."
+        answerFeedback.textContent = "Wrong. :["
     }
     
 }
@@ -90,6 +172,7 @@ function checkAnswer(answer) {
 //Game Over
 function gameOver() {
     //Clear content
+    stopTime = true;
     var quizDeck = document.querySelector(".quiz-deck");
     while (quizDeck.firstChild) {
         quizDeck.removeChild(quizDeck.firstChild);
@@ -121,6 +204,7 @@ function gameOver() {
     initialsLabel.innerHTML = "Enter Initials: "
     initialsInput.setAttribute("type", "text"); 
     initialsInput.setAttribute("maxlength", "3");
+    initialsInput.setAttribute("value", "AAA")
     saveButton.innerHTML = "Save Score";
     saveButton.setAttribute("class", "btn");
     resetButton.innerHTML = "Retake Quiz";
@@ -145,8 +229,6 @@ function gameOver() {
         
         //Locally store highscores
         var scoreStorage = JSON.parse(localStorage.getItem("highscoreList"));
-        
-        debugger;
 
         var highscoreList;
         if (scoreStorage !== null) {
@@ -217,17 +299,15 @@ function generateQuestion() {
 function highScoreView(event) {
     event.preventDefault();
     clearQuizDeck();
+    stopTime = true;
 
     // Display initials and scores
     var scoreAr = JSON.parse(localStorage.getItem("highscoreList"));
 
-    
-
     for (var i = 0; i < scoreAr.length; i++) {
-        debugger;
         var display = document.createElement("h1");
         display.setAttribute("class", "score-array");
-        display.innerHTML = scoreAr[i].initials + " - " + scoreAr[i].score;
+        display.innerHTML = scoreAr[i].initials.toUpperCase() + " - " + scoreAr[i].score;
 
         quizDeck.appendChild(display);
         
@@ -261,7 +341,9 @@ function resetQuiz() {
     currentScore = 0;
     highScore = 0;
     correctAnswers = 0;
+    stopTime = false;
     generateQuestion();
+    startTimer();
 }
 
 // Begins timer
@@ -273,8 +355,11 @@ function startTimer() {
 
         if(timeRemaining === 0) {
             clearInterval(timerInterval);
-            time.textContent = "Timer: " + timeRemaining +"s -- Time's Up!" ;
+            time.textContent = "Timer: " + timeRemaining +"s - Paused";
             gameOver();
+        } else if (stopTime === true) {
+            clearInterval(timerInterval);
+            time.textContent = "Timer: " + timeRemaining + "s - Paused";
         }
 
     }, 1000);
