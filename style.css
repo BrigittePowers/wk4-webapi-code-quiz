@@ -30,4 +30,15 @@ header, footer {
 
 .btn {
     border-radius: 10px;
+    width: 50%;
+}
+
+.quiz-deck {
+    display: flex;
+    flex-direction: column;
+}
+
+footer h1 {
+    font-size: 130%;
+    text-align: center;
 }

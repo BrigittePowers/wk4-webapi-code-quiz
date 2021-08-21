@@ -3,12 +3,14 @@
 var quiz = [
     {
         number: 1,
-        question: "This is question 1?",
-        answer: 3,
+        question: "What is the correct extension for a JavaScript file?",
+        answer: 2,
         choices: [
-            "This is an incorrect answer",
-            "This is also incorrect but moreso",
-            "This is the correct answer"
+            ".xml",
+            ".css",
+            ".js",
+            ".html",
+            ".java"
         ]
     },
     {
@@ -35,9 +37,9 @@ var quiz = [
 
 //handles
 var startButton = document.querySelector(".start")
-var choicesBtn = document.querySelectorAll(".choices-btn");
 var timeRemaining = 30;
 var questionNumber = 0;
+var questionTotal = quiz.length;
 
 // when user clicks Start! timer begins
 startButton.addEventListener("click", startTimer);
@@ -48,13 +50,8 @@ startButton.addEventListener("click", changeMessage);
 // when user clicks Start! user is presented with first question
 startButton.addEventListener("click", generateQuestion);
 
-// When question is answered...
-choicesBtn.addEventListener("click", answerSelected);
 
 
-
-// Check if right > update score
-// Check if wrong > decrease timer
 // New question loads
 
 // When all ? answered or timer is 0 GAME ENDS
@@ -65,8 +62,26 @@ choicesBtn.addEventListener("click", answerSelected);
 
 // User presented option to Play Again
 
-function answersSelected() {
+function checkAnswer(answer) {
+    console.log("You have clicked answer: " + answer + " -- " + quiz[questionNumber].choices[answer]);
 
+    // Check if right > update score
+    if (answer == quiz[questionNumber].answer) {
+        console.log(answer + " = " + quiz[questionNumber].answer + " -- Correct answer selected");
+        timerIncrease();
+        resetQuiz();
+        questionNumber = questionNumber + 1;
+        generateQuestion();
+
+    } else {
+    // Check if wrong > decrease timer
+        console.log(answer + "=" + quiz[questionNumber].answer + " -- Wrong answer selected");
+        timerDecrease();
+        resetQuiz();
+        questionNumber = questionNumber + 1;
+        generateQuestion();
+    }
+    
 }
 
 // Removes start button elements
@@ -80,34 +95,76 @@ function changeMessage() {
     landingButton.setAttribute("style", "display:none;");
 }
 
+//Game Over
+function gameOver() {
+
+}
+
 // Shows quiz deck
 function generateQuestion() {
     console.log("Quiz started");
     var quizDeck = document.querySelector(".quiz-deck");
-    
-    // show the question
-    var quizQst = document.createElement("h1");
-    quizQst.innerHTML = quiz[questionNumber].question;
-    quizDeck.appendChild(quizQst);
 
-    // for each potential answer...
-    for (var i = 0; i < quiz[questionNumber].choices.length; i++) {
-        // make a button
-        var choicesBtn = document.createElement("button")
-        choicesBtn.setAttribute("class", "btn choices-btn");
-
-        // define the content
-        choicesBtn.setAttribute("name", quiz[questionNumber].choices[i])
-        choicesBtn.innerHTML = quiz[questionNumber].choices[i];
-
-        // append
-        quizDeck.appendChild(choicesBtn);
-        console.log("Generating..." + quiz[questionNumber].choices[i]);
+    // dynamically check if the quiz is over
+    if (questionCount > questionTotal) {
+        console.log ("Game over");
+        gameOver();
     }
+    
+    else {
+        // show the question
+        var quizQst = document.createElement("h1");
+        quizQst.innerHTML = quiz[questionNumber].question;
+        quizDeck.appendChild(quizQst);
+
+        // for each potential answer...
+        for (var i = 0; i < quiz[questionNumber].choices.length; i++) {
+            // make a button
+            var choicesBtn = document.createElement("button")
+            var choicesName = quiz[questionNumber].choices[i]
+            
+
+            // define the content
+            choicesBtn.setAttribute("class", "btn choices-btn");
+            choicesBtn.setAttribute("value", i)
+
+            //listen for answer [closure] TODO figure out why it always outputs last button 
+            var c = choicesBtn
+            if (typeof choicesBtn.addEventListener === 'function'){
+                (function (c) {
+                    c.addEventListener("click", function() {
+                        checkAnswer(c.value);
+                    });
+                })(c);
+            }
+
+            //choicesBtn.addEventListener("click", function() {
+            //    checkAnswer(event.innerHTML);
+            //});
+
+            // display answer
+            choicesBtn.innerHTML = choicesName;
+            quizDeck.appendChild(choicesBtn);
+            console.log("Generating answer " + + choicesBtn.value + ": " + choicesName);
+        }   
+    }
+
+    // When question is answered...
+    //choicesBtn.addEventListener("click", answerSelected(choicesBtn.value));
+    //quizDeck.addEventListener("click", ".choices-btn", function (event))
 
     //show footer
     var questionCount = document.querySelector("footer h1");
-    questionCount.textContent = "Question " + quiz[questionNumber].number + " of x.";
+    questionCount.textContent = "Question " + quiz[questionNumber].number + " of " + questionTotal;
+}
+
+//Reset
+function resetQuiz () {
+    var quizDeck = document.querySelector(".quiz-deck");
+    while (quizDeck.firstChild) {
+        quizDeck.removeChild(quizDeck.firstChild);
+    }
+    
 }
 
 // Begins timer
@@ -121,24 +178,23 @@ function startTimer() {
             clearInterval(timerInterval);
             time.textContent = "Timer: " + timeRemaining +"s -- Time's Up!" ;
             console.log("Game Over");
-            //TODO game over screen
+            gameOver();
         }
 
     }, 1000);
 }
 
+function timerDecrease() {
+    timeRemaining = timeRemaining - 5;
+}
+
+function timerIncrease() {
+    timeRemaining = timeRemaining + 2;
+}
+
 
 
 /*
-GIVEN I am taking a code quiz
-WHEN I click the start button
-THEN a timer starts and I am presented with a question
-
-WHEN I answer a question
-THEN I am presented with another question
-
-WHEN I answer a question incorrectly
-THEN time is subtracted from the clock
 
 WHEN all questions are answered or the timer reaches 0
 THEN the game is over
