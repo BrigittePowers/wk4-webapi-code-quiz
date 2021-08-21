@@ -97,16 +97,30 @@ function changeMessage() {
 
 //Game Over
 function gameOver() {
+    //Clear content
+    var quizDeck = document.querySelector(".quiz-deck");
+    while (quizDeck.firstChild) {
+        quizDeck.removeChild(quizDeck.firstChild);
+    }
+
+    //Tally score
+
+    //Display Game Over
+    var gameOverHeader = document.createElement("h1")
+    gameOverHeader.innerHTML = "Quiz Finished!"
+    quizDeck.appendChild(gameOverHeader);
 
 }
 
 // Shows quiz deck
 function generateQuestion() {
-    console.log("Quiz started");
+    console.log("Question spawned");
     var quizDeck = document.querySelector(".quiz-deck");
+    var questionCount = document.querySelector("footer h1");
+    var quizQuestionNumber = questionNumber + 1;
 
     // dynamically check if the quiz is over
-    if (questionCount > questionTotal) {
+    if (quizQuestionNumber > questionTotal) {
         console.log ("Game over");
         gameOver();
     }
@@ -147,15 +161,15 @@ function generateQuestion() {
             quizDeck.appendChild(choicesBtn);
             console.log("Generating answer " + + choicesBtn.value + ": " + choicesName);
         }   
-    }
+    
 
     // When question is answered...
     //choicesBtn.addEventListener("click", answerSelected(choicesBtn.value));
     //quizDeck.addEventListener("click", ".choices-btn", function (event))
 
     //show footer
-    var questionCount = document.querySelector("footer h1");
     questionCount.textContent = "Question " + quiz[questionNumber].number + " of " + questionTotal;
+    }
 }
 
 //Reset
