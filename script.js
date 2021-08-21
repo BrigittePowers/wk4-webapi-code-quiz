@@ -36,7 +36,9 @@ var quiz = [
 ]
 
 //handles
-var startButton = document.querySelector(".start")
+var startButton = document.querySelector(".start");
+var viewScore = document.querySelector(".view-score");
+var quizDeck = document.querySelector(".quiz-deck");
 var timeRemaining = 30;
 var questionNumber = 0;
 var questionTotal = quiz.length;
@@ -58,11 +60,8 @@ startButton.addEventListener("click", clearQuizDeck);
 // when user clicks Start! user is presented with first question
 startButton.addEventListener("click", generateQuestion);
 
-// User can save initials and score
-
-// Score is stored for later viewing in View Highscores
-
-// User presented option to Play Again
+// highscore viewer 
+viewScore.addEventListener("click", highScoreView);
 
 function checkAnswer(answer) {
     console.log("You have clicked answer: " + answer + " -- " + quiz[questionNumber].choices[answer]);
@@ -87,7 +86,6 @@ function checkAnswer(answer) {
     }
     
 }
-
 
 //Game Over
 function gameOver() {
@@ -115,44 +113,60 @@ function gameOver() {
     quizDeck.appendChild(gameOverScoreHeader);
 
     //create high score submit form
-    var scoreForm = document.createElement("form");
     var initialsLabel = document.createElement("label");
     var initialsInput = document.createElement("input");
-    var saveButton = document.createElement("input");
+    var saveButton = document.createElement("button");
+    var resetButton = document.createElement("button");
 
     initialsLabel.innerHTML = "Enter Initials: "
     initialsInput.setAttribute("type", "text"); 
     initialsInput.setAttribute("maxlength", "3");
-    initialsInput.setAttribute("name", "intName");
-    saveButton.setAttribute("type", "submit")
     saveButton.innerHTML = "Save Score";
     saveButton.setAttribute("class", "btn");
+    resetButton.innerHTML = "Retake Quiz";
+    resetButton.setAttribute("class", "btn");
 
-    quizDeck.appendChild(scoreForm);
-    scoreForm.appendChild(initialsLabel);
-    scoreForm.appendChild(initialsInput);
-    scoreForm.appendChild(saveButton);
+    quizDeck.appendChild(initialsLabel);
+    quizDeck.appendChild(initialsInput);
+    quizDeck.appendChild(saveButton);
+    quizDeck.appendChild(resetButton);
 
     //Listen to input
     saveButton.addEventListener("click", function(event) {
         event.preventDefault();
 
         //handle initials
+        var initials = initialsInput.value;
+
         var highscore = {
-            initials: intName.value,
+            initials: initials,
             score: currentScore
         };
-        var highscoreList = [];
+        
+        //Locally store highscores
+        var scoreStorage = JSON.parse(localStorage.getItem("highscoreList"));
+        
+        debugger;
 
-        highscoreList.push(highscore);
+        var highscoreList;
+        if (scoreStorage !== null) {
+            highscoreList = scoreStorage.concat(highscore);
+            //highscoreList = [...scoreStorage, highscore];
 
-        localStorage.setItem("highscoreList", JSON.stringify("highscoreList"));
-    });    
+        } else {
+            highscoreList = [highscore];
+        }
+
+        localStorage.setItem("highscoreList", JSON.stringify(highscoreList));
+
+    });  
+    
+    //reload quiz
+    resetButton.addEventListener("click", resetQuiz);
 }
 
 // Shows quiz deck
 function generateQuestion() {
-    var quizDeck = document.querySelector(".quiz-deck");
     var questionCount = document.querySelector("footer h1");
     var quizQuestionNumber = questionNumber + 1;
 
@@ -199,26 +213,33 @@ function generateQuestion() {
     }
 }
 
-function highScoreView() {
+// view highscore button
+function highScoreView(event) {
+    event.preventDefault();
+    clearQuizDeck();
 
-}
+    // Display initials and scores
+    var scoreAr = JSON.parse(localStorage.getItem("highscoreList"));
 
-/* function storeHighscore() {
-    var highscoreStored = localStorage.getItem("highscore");
+    
 
-    if(highscoreStored !== null){
-        if (currentScore > highscoreStored) {
-            localStorage.setItem("highscore", currentScore);      
-        }
-    }
-    else{
-        localStorage.setItem("highscore", currentScore);
+    for (var i = 0; i < scoreAr.length; i++) {
+        debugger;
+        var display = document.createElement("h1");
+        display.setAttribute("class", "score-array");
+        display.innerHTML = scoreAr[i].initials + " - " + scoreAr[i].score;
+
+        quizDeck.appendChild(display);
         
     }
 
-    highScore = highscoreStored;
-} 
-*/
+    var resetButton = document.createElement("button");
+    resetButton.innerHTML = "Take Quiz";
+    resetButton.setAttribute("class", "btn")
+    quizDeck.appendChild(resetButton);
+
+    resetButton.addEventListener("click", resetQuiz);
+}
 
 function init() {
     console.log("Loaded");
@@ -231,6 +252,16 @@ function clearQuizDeck () {
         quizDeck.removeChild(quizDeck.firstChild);
     }
     
+}
+
+function resetQuiz() {
+    clearQuizDeck();
+    timeRemaining = 30;
+    questionNumber = 0;
+    currentScore = 0;
+    highScore = 0;
+    correctAnswers = 0;
+    generateQuestion();
 }
 
 // Begins timer
@@ -257,13 +288,3 @@ function timerIncrease() {
     timeRemaining = timeRemaining + 2;
 }
 
-
-
-/*
-
-WHEN all questions are answered or the timer reaches 0
-THEN the game is over
-
-WHEN the game is over
-THEN I can save my initials and my score
-*/
