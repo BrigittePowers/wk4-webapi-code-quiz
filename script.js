@@ -40,21 +40,23 @@ var startButton = document.querySelector(".start")
 var timeRemaining = 30;
 var questionNumber = 0;
 var questionTotal = quiz.length;
+var currentScore = 0;
+var highScore = 0;
+var correctAnswers = 0;
+
+//initialize
+document.addEventListener('DOMContentLoaded', function() {
+    init();
+}, false);
 
 // when user clicks Start! timer begins
 startButton.addEventListener("click", startTimer);
 
 // when user flicks Start! title and rules change
-startButton.addEventListener("click", changeMessage);
+startButton.addEventListener("click", clearQuizDeck);
 
 // when user clicks Start! user is presented with first question
 startButton.addEventListener("click", generateQuestion);
-
-
-
-// New question loads
-
-// When all ? answered or timer is 0 GAME ENDS
 
 // User can save initials and score
 
@@ -64,36 +66,28 @@ startButton.addEventListener("click", generateQuestion);
 
 function checkAnswer(answer) {
     console.log("You have clicked answer: " + answer + " -- " + quiz[questionNumber].choices[answer]);
-
+    var answerFeedback = document.querySelector("footer p");
+    
     // Check if right > update score
     if (answer == quiz[questionNumber].answer) {
-        console.log(answer + " = " + quiz[questionNumber].answer + " -- Correct answer selected");
         timerIncrease();
-        resetQuiz();
+        clearQuizDeck();
         questionNumber = questionNumber + 1;
+        correctAnswers = correctAnswers + 1;
+        answerFeedback.textContent = "Correct!"
         generateQuestion();
 
     } else {
     // Check if wrong > decrease timer
-        console.log(answer + "=" + quiz[questionNumber].answer + " -- Wrong answer selected");
         timerDecrease();
-        resetQuiz();
+        clearQuizDeck();
         questionNumber = questionNumber + 1;
         generateQuestion();
+        answerFeedback.textContent = "Wrong."
     }
     
 }
 
-// Removes start button elements
-function changeMessage() {
-    var landingTitle = document.querySelector(".landing h1")
-    var landingText = document.querySelector(".landing p")
-    var landingButton = document.querySelector(".landing button")
-
-    landingTitle.setAttribute("style", "display:none;");
-    landingText.setAttribute("style", "display:none;");
-    landingButton.setAttribute("style", "display:none;");
-}
 
 //Game Over
 function gameOver() {
@@ -104,24 +98,66 @@ function gameOver() {
     }
 
     //Tally score
+    currentScore = timeRemaining * correctAnswers;
 
     //Display Game Over
     var gameOverHeader = document.createElement("h1")
-    gameOverHeader.innerHTML = "Quiz Finished!"
-    quizDeck.appendChild(gameOverHeader);
+    gameOverHeader.innerHTML = "- - Quiz Finished - -";
 
+    var gameOverP = document.createElement("p");
+    gameOverP.innerHTML = "Enter your initials below and hit submit to save your score."
+
+    var gameOverScoreHeader = document.createElement("h2");
+    gameOverScoreHeader.innerHTML = "You scored " + currentScore + " points.";
+
+    quizDeck.appendChild(gameOverHeader);
+    quizDeck.appendChild(gameOverP);
+    quizDeck.appendChild(gameOverScoreHeader);
+
+    //create high score submit form
+    var scoreForm = document.createElement("form");
+    var initialsLabel = document.createElement("label");
+    var initialsInput = document.createElement("input");
+    var saveButton = document.createElement("input");
+
+    initialsLabel.innerHTML = "Enter Initials: "
+    initialsInput.setAttribute("type", "text"); 
+    initialsInput.setAttribute("maxlength", "3");
+    initialsInput.setAttribute("name", "intName");
+    saveButton.setAttribute("type", "submit")
+    saveButton.innerHTML = "Save Score";
+    saveButton.setAttribute("class", "btn");
+
+    quizDeck.appendChild(scoreForm);
+    scoreForm.appendChild(initialsLabel);
+    scoreForm.appendChild(initialsInput);
+    scoreForm.appendChild(saveButton);
+
+    //Listen to input
+    saveButton.addEventListener("click", function(event) {
+        event.preventDefault();
+
+        //handle initials
+        var highscore = {
+            initials: intName.value,
+            score: currentScore
+        };
+        var highscoreList = [];
+
+        highscoreList.push(highscore);
+
+        localStorage.setItem("highscoreList", JSON.stringify("highscoreList"));
+    });    
 }
 
 // Shows quiz deck
 function generateQuestion() {
-    console.log("Question spawned");
     var quizDeck = document.querySelector(".quiz-deck");
     var questionCount = document.querySelector("footer h1");
     var quizQuestionNumber = questionNumber + 1;
 
     // dynamically check if the quiz is over
     if (quizQuestionNumber > questionTotal) {
-        console.log ("Game over");
         gameOver();
     }
     
@@ -152,28 +188,44 @@ function generateQuestion() {
                 })(c);
             }
 
-            //choicesBtn.addEventListener("click", function() {
-            //    checkAnswer(event.innerHTML);
-            //});
-
             // display answer
             choicesBtn.innerHTML = choicesName;
             quizDeck.appendChild(choicesBtn);
-            console.log("Generating answer " + + choicesBtn.value + ": " + choicesName);
         }   
-    
-
-    // When question is answered...
-    //choicesBtn.addEventListener("click", answerSelected(choicesBtn.value));
-    //quizDeck.addEventListener("click", ".choices-btn", function (event))
 
     //show footer
+    //show right/wrong answer feedback only after first question
     questionCount.textContent = "Question " + quiz[questionNumber].number + " of " + questionTotal;
     }
 }
 
+function highScoreView() {
+
+}
+
+/* function storeHighscore() {
+    var highscoreStored = localStorage.getItem("highscore");
+
+    if(highscoreStored !== null){
+        if (currentScore > highscoreStored) {
+            localStorage.setItem("highscore", currentScore);      
+        }
+    }
+    else{
+        localStorage.setItem("highscore", currentScore);
+        
+    }
+
+    highScore = highscoreStored;
+} 
+*/
+
+function init() {
+    console.log("Loaded");
+}
+
 //Reset
-function resetQuiz () {
+function clearQuizDeck () {
     var quizDeck = document.querySelector(".quiz-deck");
     while (quizDeck.firstChild) {
         quizDeck.removeChild(quizDeck.firstChild);
@@ -191,7 +243,6 @@ function startTimer() {
         if(timeRemaining === 0) {
             clearInterval(timerInterval);
             time.textContent = "Timer: " + timeRemaining +"s -- Time's Up!" ;
-            console.log("Game Over");
             gameOver();
         }
 
