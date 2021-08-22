@@ -305,6 +305,9 @@ function highScoreView(event) {
 
     // Display initials and scores
     var scoreAr = JSON.parse(localStorage.getItem("highscoreList"));
+    scoreAr.sort(function(a,b) {
+        return a.score < b.score;
+    });
 
     for (var i = 0; i < scoreAr.length; i++) {
         var display = document.createElement("h1");
