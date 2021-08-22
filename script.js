@@ -81,7 +81,7 @@ var quiz = [
     },
     {
         number: 8,
-        question: "Which of the following statements is valid for the features of JavaScript??",
+        question: "Which of the following statements is valid for the features of JavaScript?",
         answer: 3,
         choices: [
             "JavaScript is complementary to and integrated with Java.",
@@ -92,7 +92,7 @@ var quiz = [
     },
     {
         number: 9,
-        question: "What is the function of Array object that adds and/or removes elements from an array??",
+        question: "What is the function of Array object that adds and/or removes elements from an array?",
         answer: 1,
         choices: [
             "sort()",
@@ -103,7 +103,7 @@ var quiz = [
     },
     {
         number: 10,
-        question: "Which of the following methods removes the last element from an array and returns that element??",
+        question: "Which of the following methods removes the last element from an array and returns that element?",
         answer: 4,
         choices: [
             "last()",
@@ -120,7 +120,7 @@ var quiz = [
 var startButton = document.querySelector(".start");
 var viewScore = document.querySelector(".view-score");
 var quizDeck = document.querySelector(".quiz-deck");
-var timeRemaining = 30;
+var timeRemaining = 60;
 var questionNumber = 0;
 var questionTotal = quiz.length;
 var currentScore = 0;
@@ -240,7 +240,9 @@ function gameOver() {
         }
 
         localStorage.setItem("highscoreList", JSON.stringify(highscoreList));
-
+        initialsLabel.setAttribute("style", "display: none;")
+        initialsInput.setAttribute("style", "display: none;");
+        saveButton.setAttribute("style", "display: none;");
     });  
     
     //reload quiz
@@ -336,7 +338,7 @@ function clearQuizDeck () {
 
 function resetQuiz() {
     clearQuizDeck();
-    timeRemaining = 30;
+    timeRemaining = 60;
     questionNumber = 0;
     currentScore = 0;
     highScore = 0;
@@ -353,7 +355,7 @@ function startTimer() {
         timeRemaining--;
         time.textContent = "Timer: " + timeRemaining +"s";
 
-        if(timeRemaining === 0) {
+        if(timeRemaining <= 0) {
             clearInterval(timerInterval);
             time.textContent = "Timer: " + timeRemaining +"s - Paused";
             gameOver();
@@ -366,10 +368,10 @@ function startTimer() {
 }
 
 function timerDecrease() {
-    timeRemaining = timeRemaining - 5;
+    timeRemaining = timeRemaining - 15;
 }
 
 function timerIncrease() {
-    timeRemaining = timeRemaining + 2;
+    timeRemaining = timeRemaining + 10;
 }
 
