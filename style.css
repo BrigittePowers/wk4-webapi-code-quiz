@@ -4,6 +4,13 @@ body .wrapper {
     padding-right: 30%;
 }
 
+@media (max-width: 600px) {
+    body .wrapper {
+        padding-left: 0%;
+        padding-right: 0%;
+    }
+}
+
 header, footer {
     background-color: #F97F51;
     box-shadow: 3px 7px #2C3A47;
@@ -38,12 +45,18 @@ header, footer {
 
 .btn {
     border-radius: 10px;
-    width: 50%;
+    width: 70%;
     min-height: 80px;
     font-size: 120%;
     background-color: #2C3A47;
     color: #eef2f7;
     margin: 1%;
+}
+
+@media (max-width: 600px) {
+    .btn {
+        width: 90%;
+    }
 }
 
 .quiz-deck {
